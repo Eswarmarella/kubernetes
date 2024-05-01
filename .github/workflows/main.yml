@@ -41,7 +41,9 @@ jobs:
           export KUBECONFIG=kubeconfig
           kubectl cluster-info
           kubectl apply -f myapp/dep.yaml
-          kubectl get pods
-          kubectl create namespace argocd
-          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+          kubectl get 
           kubectl get pods -n argocd
+          kubectl port-forward svc/argocd-server -n argocd 8080:443
+         # kubectl create namespace argocd
+          #kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+         
