@@ -1,15 +1,12 @@
-name: Build and deploy
-
+name: build and deploy
 on:
   push:
     branches:
       - main
-    paths:
-      - .github/workflows/main.yml
+    paths: .github/workflows/main.yml
   pull_request:
     branches: none
   workflow_dispatch: null
-
 jobs:
   build-deploy-aks:
     runs-on: ubuntu-latest
@@ -19,18 +16,31 @@ jobs:
       IMAGE_TAG: ${{ github.run_number }}
       CLUSTER_NAME: kubernetes-admin@kubernetes
       RESOURSE_GROUP: venkatesh-rg
-
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2
+      - name: Build Docker Image
+        run: >
+          docker build myapp -t $DOCKER_REPOSITORY/$IMAGE_NAME:$GITHUB_RUN_NUMBER
+      - name: Login to Docker Hub
+        run: >
+          echo "${{ secrets.DOCKER_PASSWORD_ESWAR }}" | docker login -u
+          $DOCKER_REPOSITORY --password-stdin
+      - name: Push Image to Docker Hub
+        run: |+
+          docker push $DOCKER_REPOSITORY/$IMAGE_NAME:$GITHUB_RUN_NUMBER
 
-      # Previous steps here...
-
-      - name: Install Helm
+      - name: Configure kubectl
         run: |
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
+          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
+          export KUBECONFIG=kubeconfig
+      - name: Deploy kubectl
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
+          export KUBECONFIG=kubeconfig
+          kubectl cluster-info
+          kubectl apply -f myapp/dep.yaml
+          kubectl get pods
 
       - name: Check Argo CD Version
         uses: clowdhaus/argo-cd-action/@main
