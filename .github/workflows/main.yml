@@ -1,48 +1,44 @@
-name: build and deploy
+name: build-and-deploy
+
 on:
   push:
     branches:
       - main
-    paths: .github/workflows/main.yml
-  pull_request:
-    branches: none
-  workflow_dispatch: null
+    paths:
+      - .github/workflows/main.yml
+
 jobs:
   build-deploy-aks:
     runs-on: ubuntu-latest
     env:
       DOCKER_REPOSITORY: emarella
       IMAGE_NAME: kubernetesimage
-      IMAGE_TAG: ${{ github.run_number }}
       CLUSTER_NAME: kubernetes-admin@kubernetes
-      RESOURSE_GROUP: venkatesh-rg
+      RESOURCE_GROUP: venkatesh-rg
+
     steps:
-      - name: Git Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v2
+
       - name: Build Docker Image
-        run: >
-          docker build myapp -t $DOCKER_REPOSITORY/$IMAGE_NAME:$GITHUB_RUN_NUMBER
+        run: docker build myapp -t $DOCKER_REPOSITORY/$IMAGE_NAME:${{ github.run_number }}
+
       - name: Login to Docker Hub
-        run: >
-          echo "${{ secrets.DOCKER_PASSWORD_ESWAR }}" | docker login -u
-          $DOCKER_REPOSITORY --password-stdin
+        run: echo "${{ secrets.DOCKER_PASSWORD_ESWAR }}" | docker login -u $DOCKER_REPOSITORY --password-stdin
+
       - name: Push Image to Docker Hub
-        run: |+
-          docker push $DOCKER_REPOSITORY/$IMAGE_NAME:$GITHUB_RUN_NUMBER
+        run: docker push $DOCKER_REPOSITORY/$IMAGE_NAME:${{ github.run_number }}
 
       - name: Configure kubectl
         run: |
           echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
           export KUBECONFIG=kubeconfig
-      - name: Deploy kubectl
+
+      - name: Deploy Application
         run: |
-          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
-          export KUBECONFIG=kubeconfig
           kubectl cluster-info
           kubectl apply -f myapp/dep.yaml
           kubectl get pods
           kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/core-install.yaml
-          kubectl -n get pod -n agrocd
-          kubectl -n svc pod -n agrocd
-          
-         
+          kubectl -n argocd get pod
+          kubectl -n argocd get svc
