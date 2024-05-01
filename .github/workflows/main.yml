@@ -26,18 +26,15 @@ jobs:
 
       # Previous steps here...
 
+      - name: Install Helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
       - name: Check Argo CD Version
         uses: clowdhaus/argo-cd-action/@main
         with:
           version: 2.6.7
           command: version
           options: --client
-
-  install-helm:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Helm
-        run: |
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
