@@ -42,5 +42,5 @@ jobs:
           kubectl cluster-info
           kubectl apply -f myapp/dep.yaml
           kubectl get pods -n argocd
-          kubectl port-forward svc/argocd-server -n argocd 8080:443
+          kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
         
