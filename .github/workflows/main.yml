@@ -38,5 +38,5 @@ jobs:
           kubectl get pods
       - name: Deploy to Kubernetes
         run: |
-         kubectl apply -f path/to/deployment.yaml
-         kubectl apply -f path/to/service.yaml
+         kubectl apply -f myapp/dep.yaml
+     
