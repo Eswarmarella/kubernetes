@@ -15,7 +15,8 @@ jobs:
       IMAGE_NAME: kubernetesimage
       IMAGE_TAG: ${{ github.run_number }}
       CLUSTER_NAME: kubernetes-admin@kubernetes
-         steps:
+      RESOURSE_GROUP: venkatesh-rg
+    steps:
       - name: Git Checkout
         uses: actions/checkout@v2
       - name: Build Docker Image
@@ -40,10 +41,3 @@ jobs:
           kubectl cluster-info
           kubectl apply -f myapp/dep.yaml
           kubectl get pods
-
-      - name: Check Argo CD Version
-        uses: clowdhaus/argo-cd-action/@main
-        with:
-          version: 2.6.7
-          command: version
-          options: --client
