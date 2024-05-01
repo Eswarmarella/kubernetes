@@ -42,4 +42,7 @@ jobs:
           kubectl apply -f myapp/dep.yaml
           kubectl get pods
           kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/core-install.yaml
+          kubectl -n get pod -n agrocd
+          kubectl -n svc pod -n agrocd
+          
          
