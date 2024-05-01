@@ -29,13 +29,10 @@ jobs:
       - name: Push Image to Docker Hub
         run: docker push $DOCKER_REPOSITORY/$IMAGE_NAME:${{ github.run_number }}
 
-      - name: Configure kubectl
+      - name: Configure & Deploy kubectl
         run: |
           echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
           export KUBECONFIG=kubeconfig
-
-      - name: Deploy Application
-        run: |
           kubectl cluster-info
           kubectl apply -f myapp/dep.yaml
           kubectl get pods
