@@ -29,7 +29,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: nginx-svc
-  namespace: venky-ns
+  namespace: eswar-ns
   labels:
     app: nginx
 spec:
@@ -46,7 +46,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: nginx
-  namespace: venky-ns
+  namespace: eswar-ns
   annotations:
     metallb.universe.tf/address-pool: first-pool
 spec:
