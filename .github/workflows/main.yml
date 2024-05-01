@@ -15,8 +15,7 @@ jobs:
       IMAGE_NAME: kubernetesimage
       IMAGE_TAG: ${{ github.run_number }}
       CLUSTER_NAME: kubernetes-admin@kubernetes
-      RESOURSE_GROUP: venkatesh-rg
-    steps:
+         steps:
       - name: Git Checkout
         uses: actions/checkout@v2
       - name: Build Docker Image
